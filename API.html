@@ -2,10 +2,14 @@
 <html lang="en">
 
 <head>
+    <!-- Meta information and page configuration -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UOB Student Nationalities</title>
+    
+    <!-- Inline CSS styles for styling the page -->
     <style>
+        /* General body styling */
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f3f4f6;
@@ -14,6 +18,7 @@
             color: #333;
         }
 
+        /* Styling for the header section */
         header {
             background: #2c3e50;
             color: white;
@@ -21,6 +26,7 @@
             text-align: center;
         }
 
+        /* Header elements: title and description */
         header h1 {
             margin: 0;
             font-size: 2rem;
@@ -31,18 +37,21 @@
             font-size: 1rem;
         }
 
+        /* Main container styling */
         main {
             max-width: 1200px;
             margin: 2rem auto;
             padding: 1rem;
         }
 
+        /* Error message styling */
         .error {
             color: red;
             text-align: center;
             font-size: 1.2rem;
         }
 
+        /* Table container styling */
         .table-wrapper {
             overflow-x: auto;
             border-radius: 8px;
@@ -51,17 +60,20 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
+        /* Styling for table and its elements */
         table {
             width: 100%;
             border-spacing: 0;
             border-collapse: separate;
         }
 
+        /* Table header styling */
         table thead {
             background: #34495e;
             color: white;
         }
 
+        /* Table cell styling */
         table th,
         table td {
             text-align: center;
@@ -69,6 +81,7 @@
             border-bottom: 1px solid #ddd;
         }
 
+        /* Rounded corners for first and last cells */
         table th:first-child,
         table td:first-child {
             border-top-left-radius: 8px;
@@ -81,14 +94,17 @@
             border-bottom-right-radius: 8px;
         }
 
+        /* Alternating row colors for better readability */
         table tbody tr:nth-child(even) {
             background: #f9f9f9;
         }
 
+        /* Hover effect for table rows */
         table tbody tr:hover {
             background: #f1f1f1;
         }
 
+        /* Footer styling */
         footer {
             background: #2c3e50;
             color: white;
@@ -104,21 +120,30 @@
 </head>
 
 <body>
+    <!-- Header section for page title and description -->
     <header>
         <h1>University of Bahrain: Student Demographics</h1>
         <p>Data on IT College Students in Bachelor Programs</p>
     </header>
+    
+    <!-- Main content area -->
     <main>
+        <!-- Dynamic content will be injected here -->
         <div id="content"></div>
     </main>
+    
+    <!-- Footer section with attribution -->
     <footer>
         <p>Data powered by <a href="https://data.gov.bh" target="_blank">Bahrain Open Data Portal</a></p>
     </footer>
 
+    <!-- JavaScript for fetching and displaying data -->
     <script>
+        // API URL for fetching student data
         const apiUrl = "https://data.gov.bh/api/explore/v2.1/catalog/datasets/01-statistics-of-students-nationalities_updated/records?where=colleges%20like%20%22IT%22%20AND%20the_programs%20like%20%22bachelor%22&limit=100";
-        const contentDiv = document.getElementById('content');
+        const contentDiv = document.getElementById('content'); // Reference to the content container
 
+        // Logs response details for debugging purposes
         function logResponseDetails(response) {
             console.log("Status:", response.status);
             console.log("OK:", response.ok);
@@ -126,33 +151,40 @@
             console.log("Headers:", response.headers);
         }
 
+        // Fetches data from the API and handles errors
         async function fetchData() {
             try {
                 const response = await fetch(apiUrl);
                 logResponseDetails(response);
 
+                // Check if the response is successful
                 if (!response.ok) {
                     throw new Error(`Failed to fetch data: ${response.statusText}`);
                 }
 
                 const data = await response.json();
 
+                // Validate the response structure and render the table
                 if (data && data.results) {
                     renderTable(data.results);
                 } else {
                     contentDiv.innerHTML = "<p class='error'>Invalid response structure. Please try again later.</p>";
                 }
             } catch (error) {
+                // Display error message if the request fails
                 contentDiv.innerHTML = `<p class='error'>Error: ${error.message}</p>`;
             }
         }
 
+        // Renders a table with the fetched records
         function renderTable(records) {
+            // Display a message if no records are found
             if (records.length === 0) {
                 contentDiv.innerHTML = "<p class='error'>No data available to display. Please try again later.</p>";
                 return;
             }
 
+            // Start building the HTML for the table
             let tableHtml = `
                 <div class="table-wrapper">
                     <table>
@@ -169,6 +201,7 @@
                         <tbody>
             `;
 
+            // Add rows for each record
             records.forEach(record => {
                 tableHtml += `
                     <tr>
@@ -182,15 +215,18 @@
                 `;
             });
 
+            // Close the table and container
             tableHtml += `
                         </tbody>
                     </table>
                 </div>
             `;
 
+            // Inject the table into the content container
             contentDiv.innerHTML = tableHtml;
         }
 
+        // Fetch and display the data when the page loads
         fetchData();
     </script>
 </body>
